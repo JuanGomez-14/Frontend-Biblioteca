@@ -64,38 +64,27 @@ npm install
 
 ⚠️ **IMPORTANTE**: Para que la aplicación funcione correctamente, necesitas configurar un token de autenticación manualmente.
 
-#### Opción 1: Token Temporal (Desarrollo)
-1. **Obtener token del backend**: Realiza una petición POST a `/api/login` con credenciales válidas
-2. **Configurar en el código**: Abre `src/api/apiClient.js`
-3. **Agregar token**: Busca la línea donde se define el token y reemplázala:
+#### Generar Token desde el Backend
 
-```javascript
-// En apiClient.js, busca esta línea:
-const token = localStorage.getItem('auth_token');
-
-// Y reemplázala temporalmente por tu token:
-const token = 'TU_TOKEN_AQUI'; // Reemplaza TU_TOKEN_AQUI por el token real
-```
-
-#### Opción 2: Login Manual
-1. **Usar herramientas de desarrollador**: Abre la consola del navegador (F12)
-2. **Establecer token**: Ejecuta el siguiente comando:
-
-```javascript
-localStorage.setItem('auth_token', 'TU_TOKEN_AQUI');
-```
-
-3. **Recargar la página**: Presiona F5 para recargar la aplicación
-
-#### Obtener Token del Backend
-Si necesitas obtener un token válido:
+Si el token expira, genera uno nuevo desde el backend con:
 
 ```bash
-# Ejemplo con curl (reemplaza las credenciales)
-curl -X POST http://localhost:8000/api/login \
-  -H "Content-Type: application/json" \
-  -d '{"email":"admin@biblioteca.com","password":"password"}'
+# En el directorio del backend Laravel, ejecuta:
+php artisan tinker
+
+# Dentro de tinker, ejecuta estos comandos:
+use App\Models\Usuario;
+$user = Usuario::find(1);
+$token = $user->createToken('api-token');
+echo $token->plainTextToken;
 ```
+
+#### Configurar Token en el Frontend
+
+1. **Abrir archivo**: Ve a `src/api/apiClient.js`
+2. **Localizar variable**: Busca la línea `const API_TOKEN = '...'`
+3. **Reemplazar token**: Copia el token generado y reemplaza la variable `API_TOKEN`
+4. **Guardar cambios**: Con esto debería funcionar sin ningún problema
 
 ### Paso 5: Ejecutar la Aplicación
 
@@ -316,18 +305,21 @@ Error 401: Unauthorized
 ```
 **Solución**:
 - **Verificar token**: Asegúrate de haber configurado el token manualmente según las instrucciones
-- **Token expirado**: Obtén un nuevo token del backend y actualízalo en `apiClient.js` o localStorage
+- **Token expirado**: Genera un nuevo token siguiendo los pasos del "Paso 4" y actualízalo en `apiClient.js`
 - **Formato correcto**: Verifica que el token tenga el formato correcto (Bearer token)
 - **Backend funcionando**: Confirma que el backend Laravel con Sanctum esté ejecutándose
 
-**Pasos detallados**:
-1. Abre las herramientas de desarrollador (F12)
-2. Ve a Application > Local Storage
-3. Verifica que existe la clave `auth_token` con un valor válido
-4. Si no existe o está vacío, configúralo manualmente:
-```javascript
-localStorage.setItem('auth_token', 'tu_token_aqui');
+**Pasos para generar nuevo token**:
+```bash
+# En el backend Laravel:
+php artisan tinker
+use App\Models\Usuario;
+$user = Usuario::find(1);
+$token = $user->createToken('api-token');
+echo $token->plainTextToken;
 ```
+
+Luego copia ese token y reemplaza la variable `API_TOKEN` en `src/api/apiClient.js`
 
 #### 3. Error de Validación al Devolver Libros
 ```
