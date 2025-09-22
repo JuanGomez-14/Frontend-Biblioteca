@@ -60,7 +60,44 @@ npm install
 1. **Verificar la URL del backend**: El frontend está configurado para conectarse a `http://localhost:8000`
 2. **Asegurar CORS**: El backend debe permitir solicitudes desde `http://localhost:5174`
 
-### Paso 4: Ejecutar la Aplicación
+### Paso 4: Configuración del Token de Autenticación
+
+⚠️ **IMPORTANTE**: Para que la aplicación funcione correctamente, necesitas configurar un token de autenticación manualmente.
+
+#### Opción 1: Token Temporal (Desarrollo)
+1. **Obtener token del backend**: Realiza una petición POST a `/api/login` con credenciales válidas
+2. **Configurar en el código**: Abre `src/api/apiClient.js`
+3. **Agregar token**: Busca la línea donde se define el token y reemplázala:
+
+```javascript
+// En apiClient.js, busca esta línea:
+const token = localStorage.getItem('auth_token');
+
+// Y reemplázala temporalmente por tu token:
+const token = 'TU_TOKEN_AQUI'; // Reemplaza TU_TOKEN_AQUI por el token real
+```
+
+#### Opción 2: Login Manual
+1. **Usar herramientas de desarrollador**: Abre la consola del navegador (F12)
+2. **Establecer token**: Ejecuta el siguiente comando:
+
+```javascript
+localStorage.setItem('auth_token', 'TU_TOKEN_AQUI');
+```
+
+3. **Recargar la página**: Presiona F5 para recargar la aplicación
+
+#### Obtener Token del Backend
+Si necesitas obtener un token válido:
+
+```bash
+# Ejemplo con curl (reemplaza las credenciales)
+curl -X POST http://localhost:8000/api/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"admin@biblioteca.com","password":"password"}'
+```
+
+### Paso 5: Ejecutar la Aplicación
 
 ```bash
 # Modo desarrollo
@@ -72,7 +109,9 @@ npm run dev
 
 La aplicación estará disponible en: `http://localhost:5174`
 
-### Paso 5: Construcción para Producción
+> **📝 Nota**: Si la aplicación muestra errores de autenticación, asegúrate de haber configurado correctamente el token según las instrucciones del Paso 4.
+
+### Paso 6: Construcción para Producción
 
 ```bash
 # Construir para producción
@@ -117,9 +156,19 @@ frontend/
 
 ### 🔐 Autenticación
 
-1. **Inicio de sesión**: Utiliza las credenciales proporcionadas por el administrador
-2. **Token de acceso**: El sistema gestiona automáticamente la autenticación
-3. **Renovación**: Los tokens se renuevan automáticamente
+⚠️ **CONFIGURACIÓN REQUERIDA**: Antes de usar la aplicación, debes configurar el token de autenticación manualmente.
+
+#### Configuración Inicial del Token
+1. **Obtener credenciales**: Solicita al administrador las credenciales de acceso
+2. **Configurar token**: Sigue las instrucciones del "Paso 4" en la sección de instalación
+3. **Verificar funcionamiento**: Una vez configurado, la aplicación debe cargar sin errores de autenticación
+
+#### Proceso de Autenticación
+1. **Token configurado**: El sistema utiliza el token configurado manualmente
+2. **Acceso automático**: Una vez configurado, no necesitas hacer login cada vez
+3. **Renovación**: Si el token expira, necesitarás obtener uno nuevo del backend
+
+> **💡 Tip**: Si ves errores de "401 Unauthorized", significa que necesitas actualizar tu token de autenticación.
 
 ### 📊 Panel de Control (Dashboard)
 
@@ -266,8 +315,19 @@ Error: Cannot connect to backend
 Error 401: Unauthorized
 ```
 **Solución**:
-- Verifica las credenciales de login
-- Asegúrate de que Sanctum esté configurado correctamente
+- **Verificar token**: Asegúrate de haber configurado el token manualmente según las instrucciones
+- **Token expirado**: Obtén un nuevo token del backend y actualízalo en `apiClient.js` o localStorage
+- **Formato correcto**: Verifica que el token tenga el formato correcto (Bearer token)
+- **Backend funcionando**: Confirma que el backend Laravel con Sanctum esté ejecutándose
+
+**Pasos detallados**:
+1. Abre las herramientas de desarrollador (F12)
+2. Ve a Application > Local Storage
+3. Verifica que existe la clave `auth_token` con un valor válido
+4. Si no existe o está vacío, configúralo manualmente:
+```javascript
+localStorage.setItem('auth_token', 'tu_token_aqui');
+```
 
 #### 3. Error de Validación al Devolver Libros
 ```
