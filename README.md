@@ -100,16 +100,6 @@ La aplicación estará disponible en: `http://localhost:5174`
 
 > **📝 Nota**: Si la aplicación muestra errores de autenticación, asegúrate de haber configurado correctamente el token según las instrucciones del Paso 4.
 
-### Paso 6: Construcción para Producción
-
-```bash
-# Construir para producción
-pnpm run build
-
-# Vista previa de la construcción
-pnpm run preview
-```
-
 ## 🏗️ Arquitectura del Proyecto
 
 ```
@@ -339,24 +329,12 @@ Para activar logs detallados:
 ```bash
 # Desarrollo
 pnpm run dev          # Ejecutar en modo desarrollo
-pnpm run build        # Construir para producción
-pnpm run preview      # Vista previa de la construcción
 pnpm run lint         # Ejecutar linting
 
 # Mantenimiento
 pnpm install          # Instalar dependencias
 pnpm update           # Actualizar dependencias
 ```
-
-## 📋 Lista de Verificación para Deployment
-
-Antes de desplegar en producción:
-
-- [ ] Configurar variables de entorno para la URL del backend
-- [ ] Ejecutar `pnpm run build` para generar archivos optimizados
-- [ ] Verificar que todas las rutas de API sean correctas
-- [ ] Configurar CORS en el backend para el dominio de producción
-- [ ] Probar todas las funcionalidades en el entorno de producción
 
 ## 🤝 Contribución
 
